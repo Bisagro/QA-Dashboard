@@ -2,10 +2,12 @@ name: Generate HTML Report
 
 on:
   push:
-    branches: [ "main" ] # Runs whenever you commit to main
-  schedule:
-    - cron: '0 0 * * *' # Runs automatically every day at midnight UTC
-  workflow_dispatch: # Allows manual trigger from the Actions tab
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# Explicitly grant permission to push files back to the repository
+permissions:
+  contents: write
 
 jobs:
   build:
