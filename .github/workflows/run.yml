@@ -2,14 +2,16 @@ name: Generate CSAT Web Page
 
 on:
   push:
-    branches: [ "main" ]  # Change to "master" if your primary branch is master
-  workflow_dispatch:      # Adds a manual "Run workflow" button in GitHub Actions
+    branches: [ "main" ]  # Runs whenever you edit code
+  workflow_dispatch:      # Gives you a manual "Run workflow" button
+  schedule:
+    - cron: '0 0 * * *'   # Optional: Runs automatically once a day at midnight
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write     # Grants permission to save index.html back to repo
+      contents: write     # Gives GitHub Actions permission to save index.html
 
     steps:
       - name: Checkout repository files
@@ -23,15 +25,15 @@ jobs:
       - name: Install MongoDB driver
         run: npm install mongodb
 
-      - name: Run index.js
+      - name: Run index.js to generate index.html
         run: node index.js
         env:
-          MY_DATABASE_URL: ${{ secrets.MONGODB_SHOPEEMY_EP_URL }}
+          MONGODB_SHOPEEMY_EP_URL: ${{ secrets.MONGODB_SHOPEEMY_EP_URL }}
 
-      - name: Commit and push generated index.html
+      - name: Save index.html back to repository
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Automated update of index.html from MongoDB" || exit 0
+          git commit -m "Automated update of index.html" || exit 0
           git push
