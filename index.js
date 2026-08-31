@@ -1,18 +1,25 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const fs = require('fs');
 
-// Secret environment variable matching your MongoDB connection string
+// 1. Validate URI existence upfront
 const uri = process.env.MONGODB_SHOPEEMY_EP_URL;
+
+if (!uri) {
+  console.error("FATAL ERROR: Environment variable MONGODB_SHOPEEMY_EP_URL is missing or undefined.");
+  process.exit(1);
+}
+
+console.log("Environment variable loaded. Initializing MongoDB client...");
 
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
+  serverSelectionTimeoutMS: 5000 // Fails fast in 5 seconds if connection is blocked
 });
 
-// Helper function to format raw MongoDB data into HTML table rows
 function processDocuments(data) {
   let tableRows = '';
 
@@ -29,7 +36,6 @@ function processDocuments(data) {
   return tableRows;
 }
 
-// Helper function to build the complete HTML page and save it to index.html
 function displayResults(tableRows, totalRecords) {
   const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -61,22 +67,23 @@ function displayResults(tableRows, totalRecords) {
 </body>
 </html>`;
 
-  // Write file out so GitHub Pages can serve it
   fs.writeFileSync('index.html', htmlContent);
   console.log("Successfully generated index.html!");
 }
 
 async function run() {
   try {
+    console.log("Attempting to connect to MongoDB...");
     await client.connect();
-    
+    console.log("Connected successfully.");
+
     const db = client.db("table");
     const collection = db.collection("csat-table");
 
-    // Fetch raw data
+    console.log("Fetching documents...");
     const rawData = await collection.find({}).toArray();
+    console.log(`Retrieved ${rawData.length} documents.`);
 
-    // Process rows & generate index.html
     const cleanDataRows = processDocuments(rawData);
     displayResults(cleanDataRows, rawData.length);
 
@@ -84,8 +91,8 @@ async function run() {
     console.error("Error executing script:", error);
     process.exit(1);
   } finally {
-    // Ensures that the client will close when finished/errored
     await client.close();
+    console.log("Database connection closed.");
   }
 }
 
