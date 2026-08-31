@@ -13,9 +13,16 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    
+    const db = client.db("table");
+    const collection = db.collection("csat-table");
+
+    // Step C: Fetch raw data
+    const rawData = await collection.find({}).toArray();
+
+    // Step D: Execute your custom functions in order
+    const cleanData = processDocuments(rawData);
+    displayResults(cleanData);
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
