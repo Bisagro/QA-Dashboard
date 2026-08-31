@@ -31,7 +31,7 @@ async function run() {
 function buildHead() {
   document.head.textContent = "";
   
-  const metaCharset = createElement({ element: "meta" });
+  /*const metaCharset = createElement({ element: "meta" });
   metaCharset.setAttribute("charset", "UTF-8");
   
   const title = createElement({ element: "title", textContent: "QA-Dashboard" });
@@ -42,7 +42,7 @@ function buildHead() {
   const favicon = createElement({ element: "link", href: "public/logo/logo.ico", type: "image/x-icon" });
   favicon.setAttribute("rel", "icon");
 
-  document.head.append(metaCharset, title, cssLink, favicon, script);
+  document.head.append(metaCharset, title, cssLink, favicon, script);*/
 }
 
 function buildBody(data){
