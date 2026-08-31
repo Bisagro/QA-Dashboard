@@ -23,6 +23,8 @@ async function run() {
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
+  } catch(e){
+    console.log(e);
   }
 }
 
@@ -32,15 +34,13 @@ function buildHead() {
   const metaCharset = createElement({ element: "meta" });
   metaCharset.setAttribute("charset", "UTF-8");
   
-  const title = createElement({ element: "title", textContent: "KB Manager" });
+  const title = createElement({ element: "title", textContent: "QA-Dashboard" });
 
   const cssLink = createElement({ element: "link", href: "root.css" });
   cssLink.setAttribute("rel", "stylesheet");
   
   const favicon = createElement({ element: "link", href: "public/logo/logo.ico", type: "image/x-icon" });
   favicon.setAttribute("rel", "icon");
-
-  const script = createElement({ element: "script", srf: "server.js" });
 
   document.head.append(metaCharset, title, cssLink, favicon, script);
 }
