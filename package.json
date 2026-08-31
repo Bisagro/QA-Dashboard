@@ -1,0 +1,12 @@
+{
+  "name": "my-html-node-app",
+  "version": "1.0.0",
+  "description": "An HTML frontend served by a Node backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
