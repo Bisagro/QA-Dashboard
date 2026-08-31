@@ -1,0 +1,37 @@
+name: Generate HTML Report
+
+on:
+  push:
+    branches: [ "main" ] # Runs whenever you commit to main
+  schedule:
+    - cron: '0 0 * * *' # Runs automatically every day at midnight UTC
+  workflow_dispatch: # Allows manual trigger from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Dependencies
+      run: npm install mongodb
+
+    - name: Run index.js to generate index.html
+      env:
+        MONGODB_SHOPEEMY_EP_URL: ${{ secrets.MONGODB_SHOPEEMY_EP_URL }}
+      run: node index.js
+
+    - name: Commit and Push generated index.html
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add index.html
+        git commit -m "auto: update generated index.html [skip ci]" || exit 0
+        git push
