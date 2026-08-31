@@ -25,4 +25,17 @@ async function run() {
   }
 }
 
+const express = require('express');
+const path = require('path');
+const app = express();
+
+// Automatically serve your index.html from the "public" folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set the port (cloud hosts use process.env.PORT)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
 run().catch(console.dir);
