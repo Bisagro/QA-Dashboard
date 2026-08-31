@@ -26,7 +26,7 @@ jobs:
       - name: Run index.js
         run: node index.js
         env:
-          MY_DATABASE_URL: ${{ secrets.MY_DATABASE_URL }}
+          MY_DATABASE_URL: ${{ secrets.MONGODB_SHOPEEMY_EP_URL }}
 
       - name: Commit and push generated index.html
         run: |
