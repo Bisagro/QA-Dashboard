@@ -47,6 +47,7 @@ function buildHead() {
 
 function buildBody(data){
   document.body.textContent = "";
+  console.log(data);
 }
 
 function createElement({element = "div", className = "", id = "", textContent = "", value = "", onClick = null, onChange = null, option = "", type = "", forWhat = "", href = "", trg = "", srf = ""}){
