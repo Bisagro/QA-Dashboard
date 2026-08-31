@@ -1,7 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const fs = require('fs');
 
-// 1. Validate URI existence upfront
 const uri = process.env.MONGODB_SHOPEEMY_EP_URL;
 
 if (!uri) {
@@ -9,26 +8,33 @@ if (!uri) {
   process.exit(1);
 }
 
-console.log("Environment variable loaded. Initializing MongoDB client...");
-
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
   },
-  serverSelectionTimeoutMS: 5000 // Fails fast in 5 seconds if connection is blocked
+  serverSelectionTimeoutMS: 5000
 });
 
+// Helper function to format raw MongoDB data into HTML table rows
 function processDocuments(data) {
   let tableRows = '';
 
   data.forEach(item => {
+    // Explicitly handle boolean mapping so `false` isn't hidden
+    let csatDisplay = '';
+    if (typeof item.csat === 'boolean') {
+      csatDisplay = item.csat ? 'TRUE' : 'FALSE';
+    } else if (item.csat !== undefined && item.csat !== null) {
+      csatDisplay = String(item.csat);
+    }
+
     tableRows += `
         <tr>
           <td>${item._id || ''}</td>
           <td>${item.case || ''}</td>
-          <td>${item.score || ''}</td>
+          <td>${csatDisplay}</td>
           <td>${item.status || ''}</td>
         </tr>`;
   });
@@ -36,6 +42,7 @@ function processDocuments(data) {
   return tableRows;
 }
 
+// Helper function to build complete HTML page
 function displayResults(tableRows, totalRecords) {
   const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -55,7 +62,7 @@ function displayResults(tableRows, totalRecords) {
         <tr>
           <th>ID</th>
           <th>Case</th>
-          <th>Score</th>
+          <th>CSAT</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -73,16 +80,15 @@ function displayResults(tableRows, totalRecords) {
 
 async function run() {
   try {
-    console.log("Attempting to connect to MongoDB...");
+    console.log("Connecting to MongoDB...");
     await client.connect();
-    console.log("Connected successfully.");
-
+    
     const db = client.db("table");
     const collection = db.collection("csat-table");
 
     console.log("Fetching documents...");
     const rawData = await collection.find({}).toArray();
-    console.log(`Retrieved ${rawData.length} documents.`);
+    console.log(`Retrieved ${rawData.length} records.`);
 
     const cleanDataRows = processDocuments(rawData);
     displayResults(cleanDataRows, rawData.length);
