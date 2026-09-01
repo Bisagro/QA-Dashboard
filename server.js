@@ -1,6 +1,10 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
-const path = require('path');
+const cors = require('cors');
+
+const app = express();
+
+app.use(cors());
 
 const uri = process.env.MONGODB_SHOPEEMY_EP_URL;
 
@@ -11,10 +15,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true
   }
 });
-
-const app = express();
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/csat', async (req, res) => {
   try {
@@ -27,6 +27,7 @@ app.get('/api/csat', async (req, res) => {
       .toArray();
 
     res.json(data);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to get CSAT data' });
