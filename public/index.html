@@ -1,11 +1,41 @@
+<!DOCTYPE html>
 <html>
-  <head>
-	  <link rel="stylesheet" href="root.css">
-	  <title>QA - Dashboard</title>
-	  <link rel="icon" type="image/x-icon" href="media/logo.ico">
-  	<meta charset="UTF-8">
-  </head>
-
-  <body>
-  </body>
+<head>
+  <link rel="stylesheet" href="root.css">
+  <title>QA - Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="media/logo.ico">
+  <meta charset="UTF-8">
 </head>
+
+<body>
+
+  <h1>QA Dashboard</h1>
+
+  <div id="results"></div>
+
+  <script>
+    async function loadData() {
+      try {
+        const response = await fetch('/api/csat');
+
+        if (!response.ok) {
+          throw new Error('Failed to load data');
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        document.getElementById('results').textContent =
+          JSON.stringify(data, null, 2);
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadData();
+  </script>
+
+</body>
+</html>
