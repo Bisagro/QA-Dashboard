@@ -1,7 +1,6 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
+const express = require("express");
+const cors = require("cors");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const app = express();
 
@@ -18,30 +17,33 @@ const client = new MongoClient(uri, {
   }
 });
 
-app.get('/api/csat', async (req, res) => {
+// Get ALL data from table.csat-table
+app.get("/api/csat", async (req, res) => {
   try {
     await client.connect();
 
     const data = await client
-      .db('table')
-      .collection('csat-table')
+      .db("table")
+      .collection("csat-table")
       .find({})
       .toArray();
 
     res.json(data);
 
   } catch (error) {
-    console.error(error);
+    console.error("MongoDB error:", error);
+
     res.status(500).json({
-      error: 'Failed to get CSAT data'
+      error: "Failed to get data from MongoDB"
     });
+
+  } finally {
+    await client.close();
   }
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
