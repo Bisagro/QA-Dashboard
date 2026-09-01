@@ -1,8 +1,8 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-
   <title>QA - Dashboard</title>
 
   <link rel="stylesheet" href="root.css">
@@ -18,22 +18,23 @@
   <pre id="results"></pre>
 
   <script>
-
     // ==========================================
-    // PUT YOUR RENDER URL HERE
+    // YOUR RENDER BACKEND
     // ==========================================
 
-    const API_URL =
-      "https://YOUR-RENDER-APP.onrender.com/api/csat";
+    const API_URL = "https://qa-dashboard-api.onrender.com/api/csat";
 
 
     // ==========================================
-    // GET DATA FROM MONGODB
+    // LOAD DATA
     // ==========================================
 
     async function loadData() {
+      const status = document.getElementById("status");
+      const results = document.getElementById("results");
 
       try {
+        status.textContent = "Connecting to database...";
 
         const response = await fetch(API_URL);
 
@@ -47,29 +48,27 @@
 
         console.log("MongoDB data:", data);
 
-        document.getElementById("status").textContent =
+        status.textContent =
           `Loaded ${data.length} records`;
 
-        document.getElementById("results").textContent =
+        results.textContent =
           JSON.stringify(data, null, 2);
 
       } catch (error) {
 
-        console.error("Error:", error);
+        console.error("API Error:", error);
 
-        document.getElementById("status").textContent =
+        status.textContent =
           "Failed to load data";
 
-        document.getElementById("results").textContent =
+        results.textContent =
           error.message;
       }
     }
 
-
-    // Run when page loads
     loadData();
-
   </script>
 
 </body>
 </html>
+```
